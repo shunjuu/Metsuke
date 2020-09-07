@@ -10,6 +10,30 @@ _JOB_SCHEMA = {
 }
 cv = Validator(_JOB_SCHEMA)
 
+class Job:
+
+    def __init__(self, show: str = None, episode: str = None, filesize: int = -1, sub: str = None):
+        self._show = show
+        self._episode = episode
+        self._filesize = filesize
+        self._sub = sub
+
+    @property
+    def show(self) -> str:
+        return self._show
+
+    @property
+    def episode(self) -> str:
+        return self._episode
+
+    @property
+    def filesize(self) -> int:
+        return self._filesize
+
+    @property
+    def sub(self) -> str:
+        return self._sub
+
 def validate(job: Dict) -> bool:
     if cv.validate(job):
         Ayumi.debug("Incoming job validated, returning True.", color=Ayumi.GREEN)
@@ -17,3 +41,11 @@ def validate(job: Dict) -> bool:
     else:
         Ayumi.debug("Incoming job is invalid, returning False.", color=Ayumi.YELLOW)
         return False
+
+def generate(job: Dict) -> Job:
+    return Job(
+        show=job['show'],
+        episode=job['episode'],
+        filesize=job['filesize'],
+        sub=job['sub']
+    )
