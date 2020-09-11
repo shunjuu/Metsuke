@@ -13,10 +13,10 @@ cv = Validator(_JOB_SCHEMA)
 class Job:
 
     def __init__(self, show: str = None, episode: str = None, filesize: int = -1, sub: str = None):
-        self._show = show
-        self._episode = episode
+        self._show = Job._clean(show)
+        self._episode = Job._clean(episode)
         self._filesize = filesize
-        self._sub = sub
+        self._sub = sub.upper()
 
     @property
     def show(self) -> str:
@@ -33,6 +33,13 @@ class Job:
     @property
     def sub(self) -> str:
         return self._sub
+
+    @staticmethod
+    def _clean(name: str) -> str:
+        if name.endswith("/"):
+            return name[:-1]
+        else:
+            return name
 
 def validate(job: Dict) -> bool:
     if cv.validate(job):

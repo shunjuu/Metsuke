@@ -9,7 +9,7 @@ setup(
         'ayumi @ git+https://github.com/shunjuu/Ayumi',
         'cerberus'
     ],
-    version='0.1',
+    version='0.2',
     license='MIT',
     description='Izumi job validator.'
 )
