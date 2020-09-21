@@ -1,14 +1,22 @@
 from ayumi import Ayumi
 from cerberus import Validator
+from datetime import datetime
 from typing import Dict
 
-_JOB_SCHEMA = {
+cv = Validator({
     "show": {'type': 'string', 'required': True},
     "episode": {'type': 'string', 'required': True},
     "filesize": {'type': 'integer', 'required': True},
     "sub": {'type': 'string', 'required': True}
-}
-cv = Validator(_JOB_SCHEMA)
+})
+
+fiv = Validator({
+    "title": {'type': 'string', 'required': True},
+    "link": {'type': 'string', 'required': True},
+    "guid": {'type': 'string', 'required': True},
+    "pubDate": {'type': 'string', 'required': True}
+})
+
 
 class Job:
 
@@ -41,18 +49,78 @@ class Job:
         else:
             return name
 
+
+class FeedItem:
+
+    def __init__(self, title: str = None, link: str = None, guid: str = None, pub_date: str = None):
+        self._title = title
+        self._link = link
+        self._guid = guid
+        self._pub_date = datetime.strptime(
+            pub_date, "%a, %d %b %Y %H:%M:%S +0000")
+
+    @property
+    def title(self) -> str:
+        return self._title
+
+    @property
+    def link(self) -> str:
+        return self._link
+
+    @property
+    def guid(self) -> str:
+        return self._guid
+
+    @property
+    # Type is datetime, but no need to import just for typing.
+    def pub_date(self):
+        return self._pub_date
+
+
 def validate(job: Dict) -> bool:
+    """Alias for validate_job, meant to support older versions."""
+    return validate_job(job)
+
+
+def validate_job(job: Dict) -> bool:
     if cv.validate(job):
-        Ayumi.debug("Incoming job validated, returning True.", color=Ayumi.GREEN)
+        Ayumi.debug("Incoming job validated, returning True.",
+                    color=Ayumi.GREEN)
         return True
     else:
-        Ayumi.debug("Incoming job is invalid, returning False.", color=Ayumi.YELLOW)
+        Ayumi.debug("Incoming job is invalid, returning False.",
+                    color=Ayumi.YELLOW)
         return False
 
+
+def validate_feeditem(item: Dict) -> bool:
+    if fiv.validate(item):
+        Ayumi.debug("Incoming feed item validated, returning True.",
+                    color=Ayumi.GREEN)
+        return True
+    else:
+        Ayumi.debug("Incoming feed item is invalid, returning False.",
+                    color=Ayumi.YELLOW)
+        return False
+
+
 def generate(job: Dict) -> Job:
+    return generate_job(job)
+
+
+def generate_job(job: Dict) -> Job:
     return Job(
         show=job['show'],
         episode=job['episode'],
         filesize=job['filesize'],
         sub=job['sub']
+    )
+
+
+def generate_feeditem(item: Dict) -> FeedItem:
+    return FeedItem(
+        title=item['title'],
+        link=item['link'],
+        guid=item['guid'],
+        pub_date=item['pubDate']
     )
