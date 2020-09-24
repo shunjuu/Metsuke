@@ -1,6 +1,5 @@
 from ayumi import Ayumi
 from cerberus import Validator
-from datetime import datetime
 from typing import Dict
 
 cv = Validator({
@@ -13,8 +12,7 @@ cv = Validator({
 fiv = Validator({
     "title": {'type': 'string', 'required': True},
     "link": {'type': 'string', 'required': True},
-    "guid": {'type': 'string', 'required': True},
-    "pubDate": {'type': 'string', 'required': True}
+    "guid": {'type': 'string', 'required': True}
 })
 
 
@@ -52,12 +50,10 @@ class Job:
 
 class FeedItem:
 
-    def __init__(self, title: str = None, link: str = None, guid: str = None, pub_date: str = None):
+    def __init__(self, title: str = None, link: str = None, guid: str = None):
         self._title = title
         self._link = link
         self._guid = guid
-        self._pub_date = datetime.strptime(
-            pub_date, "%a, %d %b %Y %H:%M:%S +0000")
 
     @property
     def title(self) -> str:
@@ -70,12 +66,6 @@ class FeedItem:
     @property
     def guid(self) -> str:
         return self._guid
-
-    @property
-    # Type is datetime, but no need to import just for typing.
-    def pub_date(self):
-        return self._pub_date
-
 
 def validate(job: Dict) -> bool:
     """Alias for validate_job, meant to support older versions."""
@@ -121,6 +111,5 @@ def generate_feeditem(item: Dict) -> FeedItem:
     return FeedItem(
         title=item['title'],
         link=item['link'],
-        guid=item['guid'],
-        pub_date=item['pubDate']
+        guid=item['guid']
     )
