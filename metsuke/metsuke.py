@@ -13,7 +13,7 @@ fiv = Validator({
     "title": {'type': 'string', 'required': True},
     "link": {'type': 'string', 'required': True},
     "guid": {'type': 'string', 'required': True},
-    "title_override": {'type': 'string', 'required': False}
+    "show_title": {'type': 'string', 'required': False}
 })
 
 
@@ -51,11 +51,11 @@ class Job:
 
 class FeedItem:
 
-    def __init__(self, title: str = None, link: str = None, guid: str = None, title_override: str = None):
+    def __init__(self, title: str = None, link: str = None, guid: str = None, show_title: str = None):
         self._title = title
         self._link = link
         self._guid = guid
-        self._title_override = title_override
+        self._show_title = show_title
 
     @property
     def title(self) -> str:
@@ -70,8 +70,8 @@ class FeedItem:
         return self._guid
     
     @property
-    def title_override(self) -> str:
-        return self._title_override
+    def show_title(self) -> str:
+        return self._show_title
 
 def validate(job: Dict) -> bool:
     """Alias for validate_job, meant to support older versions."""
@@ -114,12 +114,9 @@ def generate_job(job: Dict) -> Job:
 
 
 def generate_feeditem(item: Dict) -> FeedItem:
-    feeditem = FeedItem(
+    return FeedItem(
         title=item['title'],
         link=item['link'],
-        guid=item['guid']
+        guid=item['guid'],
+        show_title=item['show_title']
     )
-    if 'title_override' in item:
-        feeditem._title_override = item['title_override']
-    return feeditem
-
